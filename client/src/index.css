@@ -1,0 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer components{
+  .formGroup { @apply w-[50%] mt-4 flex flex-wrap flex-col px-2}
+}
+*{
+  font-family: "Manrope" , sans-serif;
+}
