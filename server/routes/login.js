@@ -16,10 +16,9 @@ loginRouter.post("/signup", async (req, res) => {
     return;
   }
   const exist = await userModel.find({ email });
-  const verificationToken = bcrypt.hashSync(
-    Math.random().toString(32).substring(2, 10),
-    10
-  );
+  const verificationToken = bcrypt
+    .hashSync(Math.random().toString(32).substring(2, 10), 10)
+    .replace(/[/$.]/g, "");
   console.log({ exist });
   //  check if email already exist and accound is activated
   if (exist.length > 0 && exist[0]?.verified) {
@@ -64,10 +63,6 @@ loginRouter.post("/signup", async (req, res) => {
       verified: false,
     });
 
-    const token = jwt.sign(
-      { email, name: fname + lname, _id: created._id },
-      process.env.JWT_SECRET
-    );
     created.password = undefined;
 
     res.cookie("user", token).send({
@@ -83,7 +78,32 @@ loginRouter.post("/signup", async (req, res) => {
 });
 
 // login route
-loginRouter.post("/login", (req, res) => {});
+loginRouter.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  const user = await userModel.findOne({ email });
+  console.log({ user });
+  if (!user) {
+    res.send({ error: true, message: "Email is not registed with us." });
+    return;
+  }
+  if (!user.verified) {
+    res.json({
+      error: true,
+      message:
+        "Email is not verified.Please verify using link sent to your email within 30min or re-signup",
+    });
+    return;
+  }
+  if (!bcrypt.compareSync(password, user.password)) {
+    res.json({ error: true, message: "Invalid creadentials" });
+    return;
+  }
+  user.password = undefined;
+  const token = jwt.sign({ email, _id: user._id }, process.env.JWT_SECRET);
+  res
+    .cookie("token", token)
+    .json({ error: false, message: "Login successfull", user });
+});
 
 //  email verification token
 loginRouter.get("/email/verify/:verificationToken", async (req, res) => {
@@ -109,6 +129,7 @@ loginRouter.get("/email/verify/:verificationToken", async (req, res) => {
     res.json({ verified, r });
     return;
   }
+
   res.json({ error: true, message: "Verification link is expired" });
 });
 export default loginRouter;
