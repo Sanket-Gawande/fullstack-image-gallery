@@ -1,5 +1,12 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 const reqString = { type: String, required: true };
+const imageSchema = mongoose.Schema({
+  name: String,
+  id: String,
+  path: String,
+  ext: String,
+  size : Number
+});
 const userSchema = mongoose.Schema({
   fname: reqString,
   lname: String,
@@ -10,6 +17,7 @@ const userSchema = mongoose.Schema({
   verificationToken: String,
   joinedOn: { type: Date, default: Date.now() },
   tokenCreatedOn: { type: Date, default: Date.now() },
+  files: [imageSchema],
 });
 
 const userModel = mongoose.model("user", userSchema);

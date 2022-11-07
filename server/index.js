@@ -2,10 +2,12 @@ import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
 import cors from "cors";
+import fileUpload from "express-fileupload";
 import mongoose from "mongoose";
 import loginRouter from "./routes/login.js";
 import cookieParser from "cookie-parser";
 import sendMail from "./email/sendMail.js";
+import imageRouter from "./routes/image.js";
 const app = express();
 
 const PORT = process.env.PORT || 8000;
@@ -15,20 +17,17 @@ app.use(
   })
 );
 app.use(cookieParser());
+app.use(fileUpload());
 app.use(express.json({ limit: "20mb" }));
 app.use(express.urlencoded({ extended: false, limit: "20mb" }));
+app.use("/images", express.static("images"));
 // routes
 app.use("/api", loginRouter);
+app.use("/api/images", imageRouter);
+
 app.get("/", async (req, res) => {
-  const mail = await sendMail(
-    "sanketgawande.gcoey@gmail.com",
-    "Sanket",
-    "dsjdfij6i857686v"
-  );
   res.send({
-    mail,
-    iamge:
-      "https://baahi.s3.ap-south-1.amazonaws.com/images/images500/50293539_4.jpg",
+    hello: "world",
   });
 });
 mongoose
