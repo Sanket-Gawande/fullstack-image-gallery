@@ -21,7 +21,7 @@ const Signup = () => {
 
     })
     const res = await req.json()
-    console.log({ res })
+   
   }
   return (
     <section className='h-full w-full flex '>
@@ -65,7 +65,7 @@ const Signup = () => {
           </div>
           {/* agrrement  */}
           <span className='flex items-center mt-6 px-2'>
-            <input type="checkbox" name="aggreement" id="terms" className='w-4 h-4' />
+            <input required type="checkbox" name="aggreement" id="terms" className='w-4 h-4' />
             <label htmlFor='terms' className='mx-1 text-sm md:w-max cursor-pointer'>By sigining up, you agree to our <a href="/" className='text-primary font-medium'>User Agreement</a>,<a href="/" className='text-primary font-medium '>Terms of Service </a> & <a href="/" className='text-primary font-medium'>Privacy policy</a></label>
           </span>
 

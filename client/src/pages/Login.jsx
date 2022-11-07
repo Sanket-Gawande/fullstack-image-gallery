@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { setUser } from '../../redux/user.slice'
 
 const Login = () => {
+  const dispatch = useDispatch()
   const [passVisible, setPasswordVisible] = useState(false)
-  const [warning, setWarning] = useState("Account already exist, please login")
+  const [warning, setWarning] = useState(null)
   const hadleLogin = async e => {
 
     e.preventDefault();
@@ -14,10 +17,20 @@ const Login = () => {
     }
     const req = await fetch(`${import.meta.env.VITE_SERVER}/login`, {
       method: "post",
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      headers: {
+        "content-type": "application/json"
+      }
     })
     const res = await req.json()
-    console.log({ res })
+    if (res.error) {
+      setWarning(res.message)
+    }
+    if (!res.error) {
+      setWarning(null)
+      console.log(res.user)
+      dispatch(setUser({ ...res?.user, name: res?.user?.fname }))
+    }
   }
   return (
     <section className='h-full w-full flex '>
@@ -38,7 +51,7 @@ const Login = () => {
           <div className='formGroup group'>
 
             <label htmlFor="fname" className='group-hover:text-primary text-sm font-medium w-max'>Email Address*</label>
-            <input type="text" id='fname' required name="fname" className='py-2 px-4 mt-1 border rounded-md flex-1 accent-primary focus:outline-primary' />
+            <input type="text" id='fname' required name="email" className='py-2 px-4 mt-1 border rounded-md flex-1 accent-primary focus:outline-primary' />
           </div>
 
           <div className='formGroup group'>
