@@ -3,15 +3,21 @@ import { Link } from 'react-router-dom'
 
 const Login = () => {
   const [passVisible, setPasswordVisible] = useState(false)
-  const [warning , setWarning] = useState("Account already exist, please login")
-  const hadleLogin = e => {
+  const [warning, setWarning] = useState("Account already exist, please login")
+  const hadleLogin = async e => {
+
     e.preventDefault();
     const formdata = new FormData(e.target);
     const payload = {}
     for (let key of formdata.keys()) {
       payload[key] = formdata.get(key)
     }
-  
+    const req = await fetch(`${import.meta.env.VITE_SERVER}/login`, {
+      method: "post",
+      body: JSON.stringify(payload)
+    })
+    const res = await req.json()
+    console.log({ res })
   }
   return (
     <section className='h-full w-full flex '>
@@ -30,24 +36,24 @@ const Login = () => {
         }
         <form onSubmit={hadleLogin} className='w-full mt-8  w-[90%] md:w-[80%]  flex-wrap'>
           <div className='formGroup group'>
-            
+
             <label htmlFor="fname" className='group-hover:text-primary text-sm font-medium w-max'>Email Address*</label>
             <input type="text" id='fname' required name="fname" className='py-2 px-4 mt-1 border rounded-md flex-1 accent-primary focus:outline-primary' />
           </div>
-          
-          <div className='formGroup group:'>
+
+          <div className='formGroup group'>
             <label htmlFor="lname" className='group-hover:text-primary text-sm font-medium'>Password*</label>
             <div className='relative'>
-              <input required type={passVisible ? "text" : "password"} id='pass' name="password" className=' w-full py-2 px-4 mt-1 border rounded-md flex-1 pr-6 accent-primary focus:outline-primary' />
+              <input required type={passVisible ? "text" : "password"} id='pass' name="password" className='md:w-full  py-2 px-4 mt-1 border rounded-md flex-1 pr-6 accent-primary focus:outline-primary' />
               <i className="fa-solid absolute right-2 fa-eye top-[50%] -translate-y-[30%] text-slate-500 cursor-pointer" onClick={() => setPasswordVisible(!passVisible)}></i>
             </div>
           </div>
-          <div className='flex justify-between w-[50%] mt-2 items-center'>
+          <div className='formGroup w-full md:w-[50%] flex-row items-center justify-between'>
             <span className='flex items-center  px-2'>
               <input type="checkbox" name="aggreement" id="terms" className='w-4 h-4' />
               <label htmlFor='terms' className='mx-1 text-sm md:w-max'>Remember me</label>
             </span>
-            <Link to="forgot" className='text-primary text-sm'>Forgot password ? </Link>
+            <Link to="forgot" className='text-primary text-sm px-2'>Forgot password ? </Link>
           </div>
 
           <button className='py-3 px-6 bg-primary mt-10 rounded-md text-white w-[50%]'>Login</button>

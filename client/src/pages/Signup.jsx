@@ -5,14 +5,23 @@ const Signup = () => {
   const [passVisible, setPasswordVisible] = useState(false)
 
   const [warning, setWarning] = useState("Invalid creadentials, please enter valid one")
-  const handleSignup = e => {
+  const handleSignup = async e => {
     e.preventDefault();
     const formdata = new FormData(e.target);
     const payload = {}
     for (let key of formdata.keys()) {
       payload[key] = formdata.get(key)
     }
-    console.log(payload)
+    const req = await fetch(`${import.meta.env.VITE_SERVER}/signup`, {
+      method: "post",
+      body: JSON.stringify(payload),
+      headers : {
+        "Content-Type"  :"application/json"
+      }
+
+    })
+    const res = await req.json()
+    console.log({ res })
   }
   return (
     <section className='h-full w-full flex '>
