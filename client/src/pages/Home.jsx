@@ -6,21 +6,21 @@ import ImageCard from '../ImageCard';
 const home = () => {
   const user = useSelector(state => state.user);
   const [selectedImages, setSelected] = useState([])
+  const [warning, setWarning] = useState(null)
   const dispatch = useDispatch()
   const uploadButtonRef = useRef()
+  const confirmDeleteRef = useRef()
   const [images, setImages] = useState([]);
   const [uploadModal, setUploadModal] = useState(false)
   const formatSize = (size) => {
     return size > 10 ** 6 ? Math.round(size / (10000)) / 100 + "Mb" : Math.round(size / (100)) / 10 + "Kb"
   }
-
   const showSelectedImages = e => {
     const inputImages = Array.from(e.target.files);
     const imagesData = inputImages.map(image => {
       return { name: image.name, file: URL.createObjectURL(image), size: image.size, bin: image }
     }
     );
-    console.log(imagesData)
     setImages([...images, ...imagesData])
   }
   const handleImageUpload = async () => {
@@ -47,16 +47,45 @@ const home = () => {
     setImages([])
     setUploadModal(false)
   }
-  console.log(user);
   // handles delete iamges
-  const handleDeleteImages = () => {
-    dispatch(setMyImages(user?.files?.filter(obj => !selectedImages.includes(obj.id))))
-    setSelected([])
-    // console.log()
+  const handleDeleteImages = async () => {
+    confirmDeleteRef.current.innerHTML = "Deleting..."
+    confirmDeleteRef.current.disabled = true
+    const req = await fetch(`${import.meta.env.VITE_SERVER}/images/delete`, {
+      method: "post",
+      body: JSON.stringify({ ids: selectedImages }),
+      headers: {
+        "content-type": "application/json"
+      }
+    })
+    const res = await req.json()
+    if (!res?.error) {
+      const images = user?.files?.filter(obj => !selectedImages.includes(obj.id))
+      dispatch(setMyImages(images))
+      setSelected([]);
+      localStorage.setItem("user", JSON.stringify({ ...user, files: images }))
+      confirmDeleteRef.current.innerHTML = "Done."
+      confirmDeleteRef.current.disabled = false
+    }
+    confirmDeleteRef.current.innerHTML = "confirm"
+    setWarning(null)
 
   }
   return (
     <section className='h-full bg-white w-full'>
+      {/* for showing alert or warning */}
+      {
+        warning &&
+        <section className='inset-0 z-10 fixed bg-slate-800/70 grid place-items-center'>
+          <div className='bg-white rounded-md p-6  w-[90%] max-w-[400px]'>
+            <h4 className='text-lg font-semibold text-primary'>{warning}</h4>
+            <div className='flex mt-8 space-x-3 items-end justify-end'>
+              <button className='py-1 px-4 border rounded-md text-primary border-current' onClick={() => setWarning(null)}>cancel</button>
+              <button className='py-1 px-4 bg-primary rounded-md text-white' onClick={handleDeleteImages} ref={confirmDeleteRef}>confirm</button>
+            </div>
+          </div>
+        </section>
+      }
       {
         uploadModal ?
           // upload images modal
@@ -75,13 +104,13 @@ const home = () => {
                     <div className='flex items-center  justify-center flex-col h-[256px] border-2 border-dashed bg-gray-50 rounded-sm'>
                       <p>Drag files here</p>
                       <p className='my-2'>or</p>
-                      <input onChange={showSelectedImages} type="file" typeof='image' multiple id='files' className='hidden' />
+                      <input onChange={showSelectedImages} type="file" accept='.jpeg , png ,.gif , .webp ' multiple id='files' className='hidden' />
                       <label htmlFor="files" className='text-primary cursor-pointer border border-current px-4 py-1 rounded-md w-max block mx-auto'>Browse</label>
                     </div>
                     :
-                    <div className='py-4 px-4 flex  flex-wrap h-[256px] justify-center md:justify-start overflow-auto bg-primary/10 rounded-sm'>
+                    <div className='py-4 px-4 flex flex-wrap h-[256px] justify-center md:justify-start overflow-auto bg-primary/10 rounded-sm'>
                       {
-                        images.map(image =>
+                        images.reverse().map(image =>
                           <div key={image.name} className="w-24 relative h-24 rounded-sm bg-white/50 m-1">
                             <button onClick={() => {
                               setImages(images.filter(img => img.name !== image.name))
@@ -112,7 +141,7 @@ const home = () => {
           </section>
           : null
       }
-      <header className='w-[90%] mx-auto py-6 md:px-6 flex justify-between flex-wrap'>
+      <header className='w-[90%] mx-auto py-6 md:px-6 flex justify-between flex-wrap '>
         <div>
           <h2 className='font-bold text-2xl md:text-3xl'>Media library</h2>
           <p className='text-slate-500 font-medium'>{user?.files?.length || 0} images</p>
@@ -124,7 +153,7 @@ const home = () => {
             Upload images</button>
           {
             selectedImages.length > 0 &&
-            <button onClick={handleDeleteImages} htmlFor='files' className='py-3 mx-2 px-3 md:px-5 text-primary cursor-pointer  font-semibold h-max  border border-current rounded-md'>
+            <button onClick={() => setWarning("Are you sure to delete the selected images?")} htmlFor='files' className='py-3 mx-2 px-3 md:px-5 text-primary cursor-pointer  font-semibold h-max  border border-current rounded-md'>
               <i className="fa-solid fa-trash mr-2"></i>
               Delete selected</button>
           }
@@ -142,7 +171,7 @@ const home = () => {
                 user?.files?.map(image =>
                   <ImageCard image={image} selectedImages={selectedImages
                   } setSelected={setSelected} />
-                )
+                ).reverse()
               }
             </section>
             :

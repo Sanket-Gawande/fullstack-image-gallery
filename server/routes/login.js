@@ -103,7 +103,7 @@ loginRouter.post("/login", async (req, res) => {
   user.verificationToken = undefined;
   const token = jwt.sign({ email, _id: user._id }, process.env.JWT_SECRET);
   res
-    .cookie("token", token)
+    .cookie("token", token, { httpOnly: true, secure: true, sameSite: "none" })
     .json({ error: false, message: "Login successfull", user });
 });
 

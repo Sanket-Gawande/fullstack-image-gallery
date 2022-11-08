@@ -16,7 +16,6 @@ const userSlice = createSlice({
       state.files = files;
     },
     setMyImages: (state, { payload }) => {
-      console.log(payload);
       state.files = payload;
     },
   },

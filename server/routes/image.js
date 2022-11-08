@@ -15,8 +15,8 @@ imageRouter.post("/add", async (req, res) => {
     const { name, size, mimetype } = image;
     const ext = mimetype?.substring(6);
     const random = Math.random().toString(32).substring(2);
-    const path = `/images/${name}_${random}.${ext}`;
-    image.mv("." + path, (err) => console.log(err));
+    const path = `images/${name}_${random}.${ext}`;
+    image.mv("./" + path, (err) => console.log(err));
     return {
       name,
       id: random,
@@ -43,12 +43,30 @@ imageRouter.post("/add", async (req, res) => {
 imageRouter.post("/delete", async (req, res) => {
   const _id = "6368ded1565ea591fdcb2ea6";
   const { ids } = req.body;
-  console.log(ids)
+  console.log(ids);
+  if (!ids) {res.send({error : true , message : "Ids must be provided of elements to be deleted."});return;}
   const akg = await userModel.updateOne(
     { _id },
-    { $pull: { files: { id: "safhv3bll3g" } } }
+    {
+      $pull: {
+        files: {
+          id: { $in: ids },
+        },
+      },
+    }
   );
   console.log(akg);
   res.send({ akg });
 });
 export default imageRouter;
+
+// db.users.updateOne(
+//   { email: "sanketgawande.gcoey@gmail.com" },
+//   {
+//     $pull: {
+//       files: {
+//         id: { $in: ["hm828thjkoo"] },
+//       },
+//     },
+//   }
+// );
