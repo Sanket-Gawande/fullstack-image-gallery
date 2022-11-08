@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { setMyImages } from '../../redux/user.slice';
+import { setMyImages, setUser } from '../../redux/user.slice';
 import ImageCard from '../ImageCard';
 
 const home = () => {
   const user = useSelector(state => state.user);
   const [selectedImages, setSelected] = useState([])
   const [warning, setWarning] = useState(null)
+  const [success, setSuccess] = useState("done !")
   const dispatch = useDispatch()
   const uploadButtonRef = useRef()
   const confirmDeleteRef = useRef()
@@ -34,6 +35,7 @@ const home = () => {
     const req = await fetch(`${import.meta.env.VITE_SERVER}/images/add`, {
       method: "post",
       body: formdata,
+      credentials: "include",
       headers: {
         'Accept': "*"
       }
@@ -53,24 +55,39 @@ const home = () => {
     confirmDeleteRef.current.disabled = true
     const req = await fetch(`${import.meta.env.VITE_SERVER}/images/delete`, {
       method: "post",
-      body: JSON.stringify({ ids: selectedImages }),
+      body: JSON.stringify({ ids: selectedImages, paths: user.files?.filter(item => { if (selectedImages.includes(item.id)) { return item.path } }) }),
+      credentials: "include",
       headers: {
-        "content-type": "application/json"
+        "content-type": "application/json",
       }
     })
     const res = await req.json()
     if (!res?.error) {
-      const images = user?.files?.filter(obj => !selectedImages.includes(obj.id))
+      const images = user?.files?.filter(obj => !selectedImages.includes(obj?.id))
       dispatch(setMyImages(images))
       setSelected([]);
       localStorage.setItem("user", JSON.stringify({ ...user, files: images }))
       confirmDeleteRef.current.innerHTML = "Done."
       confirmDeleteRef.current.disabled = false
     }
-    confirmDeleteRef.current.innerHTML = "confirm"
+    confirmDeleteRef.current.innerHTML = "delete"
     setWarning(null)
 
   }
+  const refreshData = async () => {
+    const req = await fetch(`${import.meta.env.VITE_SERVER}/getuser`, {
+      credentials: "include",
+      mode: "no-cors",
+      method: "post",
+    })
+    const res = await req.json()
+    console.log(res, "refresh user--> home.jsx")
+    if (!res?.error) {
+      localStorage.setItem("user", JSON.stringify(null))
+      dispatch(setUser({}))
+    }
+  }
+  useEffect(() => { refreshData() }, [])
   return (
     <section className='h-full bg-white w-full'>
       {/* for showing alert or warning */}
@@ -79,9 +96,12 @@ const home = () => {
         <section className='inset-0 z-10 fixed bg-slate-800/70 grid place-items-center'>
           <div className='bg-white rounded-md p-6  w-[90%] max-w-[400px]'>
             <h4 className='text-lg font-semibold text-primary'>{warning}</h4>
-            <div className='flex mt-8 space-x-3 items-end justify-end'>
+            <div className='flex mt-8 space-x-3 items-end justify-end text-sm font-semibold'>
               <button className='py-1 px-4 border rounded-md text-primary border-current' onClick={() => setWarning(null)}>cancel</button>
-              <button className='py-1 px-4 bg-primary rounded-md text-white' onClick={handleDeleteImages} ref={confirmDeleteRef}>confirm</button>
+              <button className='py-1 px-4 bg-primary rounded-md text-white border ' onClick={handleDeleteImages} ref={confirmDeleteRef}>
+                Delete
+                <i className="fa text-sm ml-2 fa-trash"></i>
+              </button>
             </div>
           </div>
         </section>
@@ -165,11 +185,11 @@ const home = () => {
         {
           user?.files?.length ?
             // gallery ui
-            <section className='w-[90%] mx-auto py-6 mt-4 md:mt-8 md:px-6 flex flex-wrap md:justify-start justify-center '>
+            <section className='w-[90%] mx-auto py-6 mt-4 md:mt-4 md:px-6 flex flex-wrap md:justify-start justify-center '>
               {
 
                 user?.files?.map(image =>
-                  <ImageCard image={image} selectedImages={selectedImages
+                  <ImageCard key={image.id} image={image} selectedImages={selectedImages
                   } setSelected={setSelected} />
                 ).reverse()
               }

@@ -18,6 +18,7 @@ const Login = () => {
     const req = await fetch(`${import.meta.env.VITE_SERVER}/login`, {
       method: "post",
       body: JSON.stringify(payload),
+      credentials : "include",
       headers: {
         "content-type": "application/json"
       }
@@ -28,8 +29,8 @@ const Login = () => {
     }
     if (!res.error) {
       setWarning(null)
-      console.log(res.user)
       dispatch(setUser({ ...res?.user, name: res?.user?.fname }))
+      localStorage.setItem("user", JSON.stringify({ ...res?.user, name: res?.user?.fname + " " + res?.user?.lname }))
     }
   }
   return (
@@ -40,14 +41,14 @@ const Login = () => {
         <p className='py-6  w-[70%] mx-auto'>Lets get you all set to start up with your account and begin setting up your profile</p>
       </section>
       {/* form */}
-      <section className='py-16 px-6 md:px-16 md:w-[60%]'>
+      <section className='py-16 px-6 md:px-16 mx-auto md:w-[60%]'>
         <h2 className='text-4xl font-bold'>Welcome back</h2>
         <p className='text-slate-500 font-medium py-4'>Please enter your details</p>
         {
           warning &&
           <p className='text-red-500 text-sm font-medium '>{warning}</p>
         }
-        <form onSubmit={hadleLogin} className='w-full mt-8  w-[90%] md:w-[80%]  flex-wrap'>
+        <form onSubmit={hadleLogin} className='w-full mt-8  md:w-[80%]  flex-wrap'>
           <div className='formGroup group'>
 
             <label htmlFor="fname" className='group-hover:text-primary text-sm font-medium w-max'>Email Address*</label>
@@ -56,7 +57,7 @@ const Login = () => {
 
           <div className='formGroup group'>
             <label htmlFor="lname" className='group-hover:text-primary text-sm font-medium'>Password*</label>
-            <div className='relative'>
+            <div className='relative min-w-[230px]'>
               <input required type={passVisible ? "text" : "password"} id='pass' name="password" className='md:w-full  py-2 px-4 mt-1 border rounded-md flex-1 pr-6 accent-primary focus:outline-primary' />
               <i className="fa-solid absolute right-2 fa-eye top-[50%] -translate-y-[30%] text-slate-500 cursor-pointer" onClick={() => setPasswordVisible(!passVisible)}></i>
             </div>
