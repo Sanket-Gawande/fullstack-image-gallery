@@ -80,6 +80,7 @@ loginRouter.post("/signup", async (req, res) => {
 // login route
 loginRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
+  console.log({ email, password });
   const user = await userModel.findOne({ email });
   console.log({ user });
   if (!user) {
@@ -99,6 +100,7 @@ loginRouter.post("/login", async (req, res) => {
     return;
   }
   user.password = undefined;
+  user.verificationToken = undefined;
   const token = jwt.sign({ email, _id: user._id }, process.env.JWT_SECRET);
   res
     .cookie("token", token)

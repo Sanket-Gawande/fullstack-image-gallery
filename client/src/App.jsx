@@ -11,13 +11,13 @@ import { setUser } from '../redux/user.slice'
 function App() {
   const [count, setCount] = useState(0)
   const user = useSelector(state => state.user)
-  console.log(user)
+
   const dispatch = useDispatch()
   useEffect(() => {
     const u = JSON.parse(localStorage.getItem("user"));
     if (u) {
       dispatch(setUser(u))
-      console.log(u)
+
     }
   }, [])
   return (

@@ -9,37 +9,20 @@ const home = () => {
   const dispatch = useDispatch()
   const uploadButtonRef = useRef()
   const [images, setImages] = useState([]);
-  const [listOfImages, setListOfImages] = useState([]);
   const [uploadModal, setUploadModal] = useState(false)
   const formatSize = (size) => {
     return size > 10 ** 6 ? Math.round(size / (10000)) / 100 + "Mb" : Math.round(size / (100)) / 10 + "Kb"
   }
 
   const showSelectedImages = e => {
-    const files = [...images]
-    for (let image of e.target.files) {
-      const ext = image.type.split("/")[1]
-      if (["png", "jpg", "jpeg"].includes(ext)) {
-        const reader = new FileReader();
-        reader.readAsDataURL(image);
-        reader.onload = () => {
-          files.push({ name: image.name, file: reader.result, size: image.size, bin: image })
-        }
-
-      }
+    const inputImages = Array.from(e.target.files);
+    const imagesData = inputImages.map(image => {
+      return { name: image.name, file: URL.createObjectURL(image), size: image.size, bin: image }
     }
-    setImages(files)
-    // setImages([...files])
+    );
+    console.log(imagesData)
+    setImages([...images, ...imagesData])
   }
-  setTimeout(() => {
-    setListOfImages(images)
-    console.log(images.length)
-    console.log(images)
-  }, 1);
-  // useEffect(() => {
-  //   console.log(images.length)
-  //   console.log(images)
-  // }, [images])
   const handleImageUpload = async () => {
     uploadButtonRef.current.innerHTML = "Please wait..."
     uploadButtonRef.current.disabled = true
@@ -84,10 +67,10 @@ const home = () => {
                 <h4>Upload images</h4>
                 <i className="fa fa-times cursor-pointer" onClick={() => setUploadModal(false)}></i>
               </div>
-              <input onChange={showSelectedImages} type="file" typeof='image' multiple id='files' className='hidden' />
-              <div className='w-full text-sm text-center p-6'>
+              <input onChange={showSelectedImages} type="file" typeof='image' multiple id='files' className='hidden' accept='image/*' />
+              <div className='w-full text-sm text-center p-5 py-6'>
                 {
-                  listOfImages.length === 0 ?
+                  images.length === 0 ?
 
                     <div className='flex items-center  justify-center flex-col h-[256px] border-2 border-dashed bg-gray-50 rounded-sm'>
                       <p>Drag files here</p>
@@ -98,10 +81,10 @@ const home = () => {
                     :
                     <div className='py-4 px-4 flex  flex-wrap h-[256px] justify-center md:justify-start overflow-auto bg-primary/10 rounded-sm'>
                       {
-                        listOfImages.map(image =>
+                        images.map(image =>
                           <div key={image.name} className="w-24 relative h-24 rounded-sm bg-white/50 m-1">
                             <button onClick={() => {
-                              setImages(listOfImages.filter(img => img.name !== image.name))
+                              setImages(images.filter(img => img.name !== image.name))
                             }} className='absolute  top-1 right-1  h-4 w-4 shadow-xs grid place-items-center  bg-slate-30 text-slate-500 text-sm border-current rounded-full border'>
 
                               <i className="fa fa-times text-[10px] "></i>

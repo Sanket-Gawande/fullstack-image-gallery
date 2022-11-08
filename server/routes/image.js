@@ -7,9 +7,10 @@ dotenv.config();
 imageRouter.post("/add", async (req, res) => {
   //  'images' name attribute provided in input(file) tag;
   const _id = "6368ded1565ea591fdcb2ea6";
-  const { images } = req.files;
+  const { images } = req?.files || {};
+  console.log(images, req?.files);
   // images gives object if only one image is sended
-  const allFiles = images.name ? [images] : [...images];
+  const allFiles = images?.name ? [images] : [...images];
   const imagesData = allFiles.map((image) => {
     const { name, size, mimetype } = image;
     const ext = mimetype?.substring(6);
@@ -18,6 +19,7 @@ imageRouter.post("/add", async (req, res) => {
     image.mv("." + path, (err) => console.log(err));
     return {
       name,
+      id: random,
       size,
       ext,
       path,
@@ -37,4 +39,16 @@ imageRouter.post("/add", async (req, res) => {
   res.send({ error: false, length: allFiles.length, imagesData });
 });
 
+// deleting image router
+imageRouter.post("/delete", async (req, res) => {
+  const _id = "6368ded1565ea591fdcb2ea6";
+  const { ids } = req.body;
+  console.log(ids)
+  const akg = await userModel.updateOne(
+    { _id },
+    { $pull: { files: { id: "safhv3bll3g" } } }
+  );
+  console.log(akg);
+  res.send({ akg });
+});
 export default imageRouter;
