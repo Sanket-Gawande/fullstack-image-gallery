@@ -56,9 +56,9 @@ const Login = () => {
           </div>
 
           <div className='formGroup group'>
-            <label htmlFor="lname" className='group-hover:text-primary text-sm font-medium'>Password*</label>
+            <label htmlFor="pass" className='group-hover:text-primary text-sm font-medium'>Password*</label>
             <div className='relative min-w-[230px]'>
-              <input required type={passVisible ? "text" : "password"} id='pass' name="password" className='md:w-full  py-2 px-4 mt-1 border rounded-md flex-1 pr-6 accent-primary focus:outline-primary' />
+              <input required type={passVisible ? "text" : "password"} id='pass' name="password" className=' w-full py-2 px-4 mt-1 border rounded-md flex-1 pr-6 accent-primary focus:outline-primary' />
               <i className="fa-solid absolute right-2 fa-eye top-[50%] -translate-y-[30%] text-slate-500 cursor-pointer" onClick={() => setPasswordVisible(!passVisible)}></i>
             </div>
           </div>
@@ -70,7 +70,7 @@ const Login = () => {
             <Link to="forgot" className='text-primary text-sm px-2'>Forgot password ? </Link>
           </div>
 
-          <button className='py-3 px-6 bg-primary mt-10 rounded-md text-white w-[50%]'>Login</button>
+          <button className='py-3 px-6 bg-primary mt-10 rounded-md text-white w-full  md:w-[50%]'>Login</button>
           <p className='w-full text-sm py-2'>Create new account ? <Link to="/signup" className='text-primary'>Signup</Link></p>
         </form>
       </section>

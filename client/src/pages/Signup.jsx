@@ -69,7 +69,7 @@ const Signup = () => {
             <Link to={"/"} className="underline text-sm text-primary">Login here</Link>
           </div>
         }
-        <form onSubmit={handleSignup} className='w-full mt-8  w-[90%] md:w-[70%] flex flex-col md:flex-row flex-wrap'>
+        <form onSubmit={handleSignup} className='mx-auto mt-8  w-[90%] md:w-[70%] flex flex-col md:flex-row flex-wrap'>
           <div className='formGroup group'>
             <label htmlFor="fname" className='group-hover:text-primary text-sm font-medium w-20'>First Name*</label>
             <input required type="text" id='fname' name="fname" className='py-2 px-4 mt-1 border rounded-md flex-1 accent-primary focus:outline-primary' />
@@ -103,7 +103,7 @@ const Signup = () => {
           <div>
 
           </div>
-          <button className='py-3 px-6 bg-primary mt-10 rounded-md text-white w-[50%]' ref={signUpButtonref}>Sign up</button>
+          <button className='py-3 px-6 bg-primary mt-10 rounded-md text-white w-full md:w-[50%]' ref={signUpButtonref}>Sign up</button>
           <p className='w-full text-sm py-2'>Already have an account ? <Link to="/" className='text-primary'>Login</Link></p>
         </form>
       </section>
