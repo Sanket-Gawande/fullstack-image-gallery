@@ -14,7 +14,7 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5173/"],
+    origin: [process.env.CLIENT_URL],
     credentials: true,
   })
 );
@@ -26,6 +26,11 @@ app.use("/api/static/images", express.static("images"));
 // routes
 app.use("/api", loginRouter);
 app.use("/api/images", imageRouter);
+app.get("/get", (req, res) => {
+
+  // res.writeHead(304, { Location: "https://rsquare-gallery.vercel.app" }).end();
+  res.redirect("https://rsquare-gallery.vercel.app/");
+});
 mongoose
   .connect(process.env.mongo_url, {})
   .then(() => {

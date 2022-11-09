@@ -45,17 +45,17 @@ const Signup = () => {
 
   }
   return (
-    <section className='h-full w-full flex '>
+    <section className='h-full w-full flex'>
       {
         user?.name && <Navigate to={"/"} />
       }
       {/* heading */}
       <section className='w-[40%] text-white bg-primary md:inline-block hidden h-full py-16'>
-        <h1 className='font-black mx-auto w-[70%] text-6xl'>Welcome to Rsquare.</h1>
+        <h1 className='font-black mx-auto  w-[70%] text-6xl'>Welcome to Rsquare.</h1>
         <p className='py-6  w-[70%] mx-auto'>Lets get you all set to start up with your account and begin setting up your profile</p>
       </section>
       {/* form */}
-      <section className='py-16 px-6 md:px-16 md:w-[60%]'>
+      <section className='py-16 mx-auto  w-[90%] md:px-16 md:w-[60%] '>
         <h2 className='text-4xl font-bold'>Begin your jouney</h2>
         <p className='text-slate-500 font-medium py-4'>Get started with your best platform for design</p>
         {

@@ -133,7 +133,7 @@ loginRouter.get("/email/verify/:verificationToken", async (req, res) => {
       { verificationToken },
       { $set: { verified: true, verificationToken: newToken } }
     );
-    res.json({ verified, r });
+    res.redirect(process.env.CLIENT_URL);
     return;
   }
 
