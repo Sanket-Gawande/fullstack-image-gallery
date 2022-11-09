@@ -102,7 +102,7 @@ const home = () => {
   }
   useEffect(() => { refreshData() }, [])
   return (
-    <section className='h-full bg-white w-full'>
+    <section className='h-full bg-white w-full transition-all duration-300'>
       {/* for showing alert or warning */}
       {
         warning &&
@@ -174,19 +174,19 @@ const home = () => {
           </section>
           : null
       }
-      <header className='w-[90%] mx-auto py-6 md:px-6 flex justify-between flex-wrap '>
+      <header className='w-[90%] mx-auto transition-all duration-300 py-6 md:px-6 flex justify-between flex-wrap '>
         <div>
           <h2 className='font-bold text-2xl md:text-3xl'>Media library</h2>
           <p className='text-slate-500 font-medium'>{user?.files?.length || 0} images</p>
 
         </div>
-        <div>
+        <div className='flex items-center justify-between mx-auto md:mx-0 mt-4' >
           <button onClick={() => setUploadModal(!uploadModal)} htmlFor='files' className='py-3 px-3 md:px-5 bg-primary cursor-pointer text-white font-semibold h-max  rounded-md'>
             <i className="fa-solid fa-circle-plus mr-2"></i>
             Upload images</button>
           {
             selectedImages.length > 0 &&
-            <button onClick={() => setWarning("Are you sure to delete the selected images?")} htmlFor='files' className='py-3 mx-2 px-3 md:px-5 text-primary cursor-pointer  font-semibold h-max  border border-current rounded-md'>
+            <button onClick={() => setWarning("Are you sure to delete the selected images?")} htmlFor='files' className='py-3 mx-2 px-3 md:px-5 text-primary cursor-pointer duration-300 transition-all  font-semibold h-max  border border-current rounded-md'>
               <i className="fa-solid fa-trash mr-2"></i>
               Delete selected</button>
           }
@@ -198,7 +198,7 @@ const home = () => {
         {
           user?.files?.length ?
             // gallery ui
-            <section className='w-[90%] mx-auto py-6 mt-4 md:mt-4 md:px-6 flex flex-wrap md:justify-start justify-center '>
+            <section className='w-[90%] transition-all duration-500 mx-auto py-6 mt-4 md:mt-4 md:px-6 flex flex-wrap md:justify-start justify-center '>
               {
 
                 user?.files?.map(image =>

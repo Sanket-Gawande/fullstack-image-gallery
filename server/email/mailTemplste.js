@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 export default function template(name, token) {
   return `
 <!DOCTYPE html>
@@ -17,7 +19,7 @@ export default function template(name, token) {
         Please verify email to activate account using link given below
       </p>
       <a
-        href='http://localhost:8000/api/email/verify/${token}'
+        href='${process.env.BASE_URL}/api/email/verify/${token}'
         style="padding: 0.5rem 1rem; background: #6360ab; color: white;"
       >
         click here
