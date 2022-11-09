@@ -2,13 +2,12 @@
   "name": "rsquare",
   "version": "1.0.0",
   "description": "backend directory",
-  "main": "index.js",
   "author": "Sanket-G",
   "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
