@@ -58,18 +58,19 @@ const Signup = () => {
       <section className='py-16 mx-auto  w-[90%] md:px-16 md:w-[60%] '>
         <h2 className='text-4xl font-bold'>Begin your jouney</h2>
         <p className='text-slate-500 font-medium py-4'>Get started with your best platform for design</p>
-        {
-          warning &&
-          <p className='text-red-500 text-sm font-medium '>{warning}</p>
-        }
-        {
-          success &&
-          <div>
-            <p className='text-green-500 text-sm font-medium '>{success}</p>
-            <Link to={"/"} className="underline text-sm text-primary">Login here</Link>
-          </div>
-        }
+
         <form onSubmit={handleSignup} className='mx-auto md:mx-0 mt-8  w-[90%] md:w-[70%] flex flex-col md:flex-row flex-wrap'>
+          {
+            warning &&
+            <p className='text-red-500 py-2 px-2 mb-2 rounded-md text-sm font-medium w-full bg-red-100'>{warning}</p>
+          }
+          {
+            success &&
+            <div>
+              <p className='text-green-600 p-2 rounded-md bg-green-100 text-sm font-medium '>{success}</p>
+              <Link to={"/"} className="underline text-sm text-primary">Login here</Link>
+            </div>
+          }
           <div className='formGroup group'>
             <label htmlFor="fname" className='group-hover:text-primary text-sm font-medium w-20'>First Name*</label>
             <input required type="text" id='fname' name="fname" className='py-2 px-4 mt-1 border rounded-md flex-1 accent-primary focus:outline-primary' />
@@ -84,8 +85,8 @@ const Signup = () => {
             <input required type="text" id='email' name="email" className='py-2 px-4 mt-1 border rounded-md flex-1 accent-primary focus:outline-primary' />
           </div>
           <div className='formGroup group'>
-            <label htmlFor="phone" className='group-hover:text-primary text-sm font-medium'>Phone*</label>
-            <input required type="text" id='phone' name="phone" className='py-2 px-4 mt-1 border rounded-md flex-1 accent-primary focus:outline-primary' />
+            <label htmlFor="phone" className='group-hover:text-primary text-sm font-medium' >Phone*</label>
+            <input pattern='[0-9]{10}' required type="text" id='phone' name="phone" className='py-2 px-4 mt-1 border rounded-md flex-1 accent-primary focus:outline-primary' />
           </div>
           <div className='formGroup group'>
             <label htmlFor="pass" className='group-hover:text-primary text-sm font-medium'>Password*</label>

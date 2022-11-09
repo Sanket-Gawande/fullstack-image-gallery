@@ -1,14 +1,16 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { setUser } from '../../redux/user.slice'
 
 const Login = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const loginButtonRef = useRef()
   const [passVisible, setPasswordVisible] = useState(false)
   const [warning, setWarning] = useState(null)
   const hadleLogin = async e => {
-
+    loginButtonRef.current.innerHTML = "Please wait..."
+    loginButtonRef.current.disabled = true
     e.preventDefault();
     const formdata = new FormData(e.target);
     const payload = {}
@@ -18,7 +20,7 @@ const Login = () => {
     const req = await fetch(`${import.meta.env.VITE_SERVER}/login`, {
       method: "post",
       body: JSON.stringify(payload),
-      credentials : "include",
+      credentials: "include",
       headers: {
         "content-type": "application/json"
       }
@@ -30,8 +32,11 @@ const Login = () => {
     if (!res.error) {
       setWarning(null)
       dispatch(setUser({ ...res?.user, name: res?.user?.fname }))
-      localStorage.setItem("user", JSON.stringify({ ...res?.user, name: res?.user?.fname + " " + res?.user?.lname }))
+      localStorage.setItem("user", JSON.stringify({ ...res?.user, name: res?.user?.fname + " " + res?.user?.lname }));
+      
     }
+    loginButtonRef.current.innerHTML = "Login"
+    loginButtonRef.current.disabled = false
   }
   return (
     <section className='h-full w-full flex '>
@@ -44,11 +49,12 @@ const Login = () => {
       <section className='py-16 px-6 md:px-16 mx-auto md:w-[60%]'>
         <h2 className='text-4xl font-bold'>Welcome back</h2>
         <p className='text-slate-500 font-medium py-4'>Please enter your details</p>
-        {
-          warning &&
-          <p className='text-red-500 text-sm font-medium '>{warning}</p>
-        }
+
         <form onSubmit={hadleLogin} className='w-full mt-8  md:w-[80%]  flex-wrap'>
+          {
+            warning &&
+            <p className='text-red-500 p-2 max-w-[320px] bg-red-100 rounded-md text-sm font-medium '>{warning}</p>
+          }
           <div className='formGroup group'>
 
             <label htmlFor="fname" className='group-hover:text-primary text-sm font-medium w-max'>Email Address*</label>
@@ -70,7 +76,7 @@ const Login = () => {
             <Link to="forgot" className='text-primary text-sm px-2'>Forgot password ? </Link>
           </div>
 
-          <button className='py-3 px-6 bg-primary mt-10 rounded-md text-white w-full  md:w-[50%]'>Login</button>
+          <button className='py-3 px-6 bg-primary mt-10 rounded-md text-white w-full  md:w-[50%]' ref={loginButtonRef}>Login</button>
           <p className='w-full text-sm py-2'>Create new account ? <Link to="/signup" className='text-primary'>Signup</Link></p>
         </form>
       </section>

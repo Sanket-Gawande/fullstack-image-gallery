@@ -16,23 +16,28 @@ loginRouter.post("/signup", async (req, res) => {
     res.json({ error: true, message: "Please enter all required fileds" });
     return;
   }
-  const exist = await userModel.find({ email });
+  const exist = await userModel.findOne({ email });
   const verificationToken = bcrypt
     .hashSync(Math.random().toString(32).substring(2, 10), 10)
     .replace(/[/$.]/g, "");
   //  check if email already exist and accound is activated
-  if (exist.length > 0 && exist[0]?.verified) {
+  if (exist && exist?.verified) {
     res.json({ error: true, message: "email already exist" });
     return;
   }
   // check if email exist but email is not verified
-  if (exist.length > 0 && !exist[0]?.verified) {
+  if (exist && !exist?.verified) {
+    const hash = bcrypt.hashSync(password, 10);
     try {
       // on re-signup older data will be updated with new time (30 minute constraint)
       const updateTokenTime = await userModel.updateOne(
         { email },
         {
-          $set: { tokenCreatedOn: new Date() },
+          $set: {
+            tokenCreatedOn: new Date(),
+            verificationToken,
+            password: hash,
+          },
         }
       );
       await sendMail(email, fname + lname, verificationToken);
@@ -81,6 +86,10 @@ loginRouter.post("/signup", async (req, res) => {
 // login route
 loginRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    res.json({ error: true, message: "Please enter all required fileds" });
+    return;
+  }
   const user = await userModel.findOne({ email });
   if (!user) {
     res
@@ -133,7 +142,7 @@ loginRouter.get("/email/verify/:verificationToken", async (req, res) => {
       { verificationToken },
       { $set: { verified: true, verificationToken: newToken } }
     );
-    res.redirect(process.env.CLIENT_URL);
+    res.redirect(process.env.CLIENT_URL + "/verification-status");
     return;
   }
 
