@@ -26,13 +26,6 @@ app.use("/api/static/images", express.static("images"));
 // routes
 app.use("/api", loginRouter);
 app.use("/api/images", imageRouter);
-
-// build folder
-// const __dirname = path.resolve(path.dirname(""));
-// app.get("*", (req, res) => {
-//   res.sendFile(path.resolve(__dirname, "dist/index.html"));
-// });
-app.use("/", express.static("dist"));
 mongoose
   .connect(process.env.mongo_url, {})
   .then(() => {
