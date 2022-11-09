@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import sendMail from "../email/sendMail.js";
+import verifyToken from "../middleware.js";
 dotenv.config();
 const loginRouter = express.Router();
 
@@ -19,7 +20,6 @@ loginRouter.post("/signup", async (req, res) => {
   const verificationToken = bcrypt
     .hashSync(Math.random().toString(32).substring(2, 10), 10)
     .replace(/[/$.]/g, "");
-  console.log({ exist });
   //  check if email already exist and accound is activated
   if (exist.length > 0 && exist[0]?.verified) {
     res.json({ error: true, message: "email already exist" });
@@ -45,7 +45,9 @@ loginRouter.post("/signup", async (req, res) => {
       return;
     } catch (error) {
       console.log({ error });
-      res.json({ error: true, message: "Something went wrong !!!" });
+      res
+        .status(400)
+        .json({ error: true, message: "Something went wrong !!!" });
     }
   }
 
@@ -65,9 +67,8 @@ loginRouter.post("/signup", async (req, res) => {
 
     created.password = undefined;
 
-    res.cookie("user", token).send({
+    res.status(200).send({
       error: false,
-      token,
       user: created,
       message:
         "Your account is created successfully, please verify email to activate your account",
@@ -80,15 +81,15 @@ loginRouter.post("/signup", async (req, res) => {
 // login route
 loginRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  console.log({ email, password });
   const user = await userModel.findOne({ email });
-  console.log({ user });
   if (!user) {
-    res.send({ error: true, message: "Email is not registed with us." });
+    res
+      .status(400)
+      .send({ error: true, message: "Email is not registed with us." });
     return;
   }
   if (!user.verified) {
-    res.json({
+    res.status(400).json({
       error: true,
       message:
         "Email is not verified.Please verify using link sent to your email within 30min or re-signup",
@@ -96,14 +97,20 @@ loginRouter.post("/login", async (req, res) => {
     return;
   }
   if (!bcrypt.compareSync(password, user.password)) {
-    res.json({ error: true, message: "Invalid creadentials" });
+    res.status(400).json({ error: true, message: "Invalid creadentials" });
     return;
   }
   user.password = undefined;
   user.verificationToken = undefined;
   const token = jwt.sign({ email, _id: user._id }, process.env.JWT_SECRET);
   res
-    .cookie("token", token, { httpOnly: true, secure: true, sameSite: "none" })
+    .status(200)
+    .cookie("token", token, {
+      secure: true,
+      httpOnly: true,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
     .json({ error: false, message: "Login successfull", user });
 });
 
@@ -111,14 +118,12 @@ loginRouter.post("/login", async (req, res) => {
 loginRouter.get("/email/verify/:verificationToken", async (req, res) => {
   const { verificationToken } = req.params;
   const verified = await userModel.find({ verificationToken });
-  console.log({ verificationToken, verified });
   if (!verified[0]) {
     res.json({ error: true, message: "Invalid link" });
     return;
   }
   const validTime =
     new Date().getTime() - new Date(verified[0].tokenCreatedOn).getTime();
-  console.log(verified, { validTime }, verified[0].tokenCreatedOn);
   if (validTime <= 1.8e6) {
     const newToken = bcrypt.hashSync(
       Math.random().toString(32).substring(2, 10),
@@ -133,5 +138,17 @@ loginRouter.get("/email/verify/:verificationToken", async (req, res) => {
   }
 
   res.json({ error: true, message: "Verification link is expired" });
+});
+
+loginRouter.post("/getuser", verifyToken, async (req, res) => {
+  const { _id } = req.user;
+  try {
+    const user = await userModel.findOne({ _id });
+    user.password = undefined;
+    user.verificationToken = undefined;
+    res.status(200).json({ user, error: false });
+  } catch (error) {
+    res.status(400).json({ message: error.message, error: true });
+  }
 });
 export default loginRouter;

@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import  path  from "path"
 dotenv.config();
 import cors from "cors";
 import fileUpload from "express-fileupload";
@@ -13,23 +14,27 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 app.use(
   cors({
-    origin: "*",
+    origin: ["http://localhost:5173", "http://localhost:5173/"],
+    credentials: true,
   })
 );
 app.use(cookieParser());
 app.use(fileUpload());
-app.use(express.json({ limit: "20mb" }));
+app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: false, limit: "20mb" }));
-app.use("/images", express.static("images"));
+app.use("/api/static/images", express.static("images"));
 // routes
 app.use("/api", loginRouter);
 app.use("/api/images", imageRouter);
 
-app.get("/", async (req, res) => {
-  res.send({
-    hello: "world",
-  });
-});
+
+
+// // build folder
+// const __dirname = path.resolve(path.dirname(""));
+// app.get("*", (req, res) => {
+//   res.sendFile( path.resolve(__dirname , "dist", "index.html") );
+// });
+app.use( "/", express.static("dist"))
 mongoose
   .connect(process.env.mongo_url, {})
   .then(() => {

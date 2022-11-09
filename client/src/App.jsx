@@ -8,6 +8,7 @@ import Signup from './pages/Signup'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { setUser } from '../redux/user.slice'
+import Error from './pages/Error'
 function App() {
   const [count, setCount] = useState(0)
   const user = useSelector(state => state.user)
@@ -25,6 +26,7 @@ function App() {
       <Routes>
         <Route path='/' element={user?.name ? <Home /> : <Login />} />
         <Route path='/signup' element={<Signup />} />
+        <Route path='/*' element={<Error />} />
       </Routes>
     </BrowserRouter>
   )

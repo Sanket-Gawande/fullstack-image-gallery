@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { setMyImages, setUser } from '../../redux/user.slice';
 import ImageCard from '../ImageCard';
 
@@ -12,7 +13,13 @@ const home = () => {
   const uploadButtonRef = useRef()
   const confirmDeleteRef = useRef()
   const [images, setImages] = useState([]);
-  const [uploadModal, setUploadModal] = useState(false)
+  const [uploadModal, setUploadModal] = useState(false);
+  const navigate = useNavigate()
+  const resetUser = () => {
+    localStorage.removeItem("user");
+    dispatch(setUser({}));
+    navigate("/")
+  }
   const formatSize = (size) => {
     return size > 10 ** 6 ? Math.round(size / (10000)) / 100 + "Mb" : Math.round(size / (100)) / 10 + "Kb"
   }
@@ -41,6 +48,9 @@ const home = () => {
       }
     });
     const res = await req.json();
+    if (res.token === "not-provided") {
+      resetUser()
+    }
     // console.log([...res?.imagesData])
     dispatch(setMyImages(user?.files?.concat(res?.imagesData)));
     localStorage.setItem("user", JSON.stringify({ ...user, files: user?.files?.concat(res?.imagesData) }))
@@ -55,13 +65,16 @@ const home = () => {
     confirmDeleteRef.current.disabled = true
     const req = await fetch(`${import.meta.env.VITE_SERVER}/images/delete`, {
       method: "post",
-      body: JSON.stringify({ ids: selectedImages, paths: user.files?.filter(item => { if (selectedImages.includes(item.id)) { return item.path } }) }),
+      body: JSON.stringify({ ids: selectedImages, paths: user.files?.filter(item => { if (selectedImages.includes(item?.id)) { return item?.path } }) }),
       credentials: "include",
       headers: {
         "content-type": "application/json",
       }
     })
-    const res = await req.json()
+    const res = await req.json();
+    if (res.token === "not-provided") {
+      resetUser()
+    }
     if (!res?.error) {
       const images = user?.files?.filter(obj => !selectedImages.includes(obj?.id))
       dispatch(setMyImages(images))
@@ -76,16 +89,16 @@ const home = () => {
   }
   const refreshData = async () => {
     const req = await fetch(`${import.meta.env.VITE_SERVER}/getuser`, {
-      credentials: "include",
-      mode: "no-cors",
       method: "post",
+      credentials: "include"
     })
     const res = await req.json()
     console.log(res, "refresh user--> home.jsx")
-    if (!res?.error) {
-      localStorage.setItem("user", JSON.stringify(null))
-      dispatch(setUser({}))
+    if (res.token === "not-provided") {
+      resetUser()
+
     }
+    dispatch(setUser({ ...res?.user, name: `${res.user?.fname} ${res?.user?.lname}` }))
   }
   useEffect(() => { refreshData() }, [])
   return (
@@ -189,7 +202,7 @@ const home = () => {
               {
 
                 user?.files?.map(image =>
-                  <ImageCard key={image.id} image={image} selectedImages={selectedImages
+                  <ImageCard key={image?.id} image={image} selectedImages={selectedImages
                   } setSelected={setSelected} />
                 ).reverse()
               }
