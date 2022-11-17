@@ -17,6 +17,7 @@ imageRouter.post("/add", verifyToken, async (req, res) => {
     res.status(400).json({ error: true, message: "No images found" });
     return
   }
+  
   const imagesData = allFiles.map((image) => {
     const { name, size, mimetype } = image;
     // handling svg files extention as it giver mimetype = image/svg+xml
