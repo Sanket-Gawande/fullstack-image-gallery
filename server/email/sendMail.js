@@ -9,7 +9,7 @@ export default async function sendMail(email, name, token) {
       user: process.env.USER_ID,
       pass: process.env.PASSWORD,
     },
-  });
+  }); 
   try {
     const confirmation = await transport.sendMail({
       from: "javascript.0dev@gmail.com",

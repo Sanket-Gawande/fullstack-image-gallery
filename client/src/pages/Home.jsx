@@ -59,6 +59,12 @@ const home = () => {
     setImages([])
     setUploadModal(false)
   }
+  // basic logout 
+  // removes user from localStorage
+  function logOut() {
+    localStorage.removeItem("user");
+    navigate("/login")
+  }
   // handles delete iamges
   const handleDeleteImages = async () => {
     confirmDeleteRef.current.innerHTML = "Deleting..."
@@ -103,6 +109,8 @@ const home = () => {
   useEffect(() => { refreshData() }, [])
   return (
     <section className='h-full bg-white w-full transition-all duration-300'>
+      {/* logout button */}
+      <button title='log out' className='fixed bottom-12 right-0 rounded-l-full text-md bg-primary p-2 pl-3 pr-4 shadow-sm text-white' onClick={logOut}> <i className="fa-solid fa-power-off"></i> </button>
       {/* for showing alert or warning */}
       {
         warning &&
@@ -136,7 +144,7 @@ const home = () => {
 
                     <div className='flex items-center  justify-center flex-col h-[256px] border-2 border-dashed bg-gray-50 rounded-sm'>
                       <p className='my-2'>Select images to upload</p>
-                     
+
                       <input onChange={showSelectedImages} type="file" accept='.jpeg , png ,.gif , .webp ' multiple id='files' className='hidden' />
                       <label htmlFor="files" className='text-primary cursor-pointer border border-current px-4 py-1 rounded-md w-max block mx-auto'>Browse</label>
                     </div>
