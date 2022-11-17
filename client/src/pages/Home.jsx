@@ -135,8 +135,8 @@ const home = () => {
                   images.length === 0 ?
 
                     <div className='flex items-center  justify-center flex-col h-[256px] border-2 border-dashed bg-gray-50 rounded-sm'>
-                      <p>Drag files here</p>
-                      <p className='my-2'>or</p>
+                      <p className='my-2'>Select images to upload</p>
+                     
                       <input onChange={showSelectedImages} type="file" accept='.jpeg , png ,.gif , .webp ' multiple id='files' className='hidden' />
                       <label htmlFor="files" className='text-primary cursor-pointer border border-current px-4 py-1 rounded-md w-max block mx-auto'>Browse</label>
                     </div>
@@ -174,13 +174,13 @@ const home = () => {
           </section>
           : null
       }
-      <header className='w-[90%] mx-auto transition-all duration-300 py-6 md:px-6 flex justify-between flex-wrap '>
+      <header className='w-[90%] mx-auto transition-all duration-300 py-6 md:px-6 flex justify-between flex-wrap items-center'>
         <div>
           <h2 className='font-bold text-2xl md:text-3xl'>Media library</h2>
           <p className='text-slate-500 font-medium'>{user?.files?.length || 0} images</p>
 
         </div>
-        <div className='flex items-center justify-between mx-auto md:mx-0 mt-4' >
+        <div className='flex items-center justify-between md:mx-0 mt-4' >
           <button onClick={() => setUploadModal(!uploadModal)} htmlFor='files' className='py-3 px-3 md:px-5 bg-primary cursor-pointer text-white font-semibold h-max  rounded-md'>
             <i className="fa-solid fa-circle-plus mr-2"></i>
             Upload images</button>

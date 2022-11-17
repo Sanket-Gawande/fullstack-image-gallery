@@ -59,7 +59,7 @@ const Signup = () => {
         <h2 className='text-4xl font-bold'>Begin your jouney</h2>
         <p className='text-slate-500 font-medium py-4'>Get started with your best platform for design</p>
 
-        <form onSubmit={handleSignup} className='mx-auto md:mx-0 mt-8  w-[90%] md:w-[70%] flex flex-col md:flex-row flex-wrap'>
+        <form onSubmit={handleSignup} className='mx-auto md:mx-0 mt-8 w-[90%]  flex flex-col md:flex-row flex-wrap'>
           {
             warning &&
             <p className='text-red-500 py-2 px-2 mb-2 rounded-md text-sm font-medium w-full bg-red-100'>{warning}</p>
@@ -73,26 +73,26 @@ const Signup = () => {
           }
           <div className='formGroup group'>
             <label htmlFor="fname" className='group-hover:text-primary text-sm font-medium w-20'>First Name*</label>
-            <input required type="text" id='fname' name="fname" className='py-2 px-4 mt-1 border rounded-md flex-1 accent-primary focus:outline-primary' />
+            <input required type="text" id='fname' name="fname" className='py-2 px-4 mt-1 border rounded-md flex-1 w-full accent-primary focus:outline-primary' />
           </div>
 
           <div className='formGroup group'>
             <label htmlFor="lname" className='group-hover:text-primary text-sm font-medium'>Last Name*</label>
-            <input required type="text" id='lname' name="lname" className='py-2 px-4 mt-1 border rounded-md flex-1 accent-primary focus:outline-primary' />
+            <input required type="text" id='lname' name="lname" className='py-2 px-4 mt-1 border w-full rounded-md flex-1 accent-primary focus:outline-primary' />
           </div>
           <div className='formGroup group'>
             <label htmlFor="email" className='group-hover:text-primary text-sm font-medium'>Email*</label>
-            <input required type="text" id='email' name="email" className='py-2 px-4 mt-1 border rounded-md flex-1 accent-primary focus:outline-primary' />
+            <input required type="text" id='email' name="email" className='py-2 px-4 mt-1 border w-full rounded-md flex-1 accent-primary focus:outline-primary' />
           </div>
           <div className='formGroup group'>
             <label htmlFor="phone" className='group-hover:text-primary text-sm font-medium' >Phone*</label>
-            <input pattern='[0-9]{10}' required type="text" id='phone' name="phone" className='py-2 px-4 mt-1 border rounded-md flex-1 accent-primary focus:outline-primary' />
+            <input pattern='[0-9]{10}' required type="text" id='phone' name="phone" className='py-2 w-full px-4 mt-1 border rounded-md flex-1 accent-primary focus:outline-primary' />
           </div>
           <div className='formGroup group'>
             <label htmlFor="pass" className='group-hover:text-primary text-sm font-medium'>Password*</label>
-            <div className='relative min-w-[230px]'>
+            <div className='relative min-w-[230px] w-full'>
               <input required type={passVisible ? "text" : "password"} id='pass' name="password" className=' w-full py-2 px-4 mt-1 border rounded-md flex-1 pr-6 accent-primary focus:outline-primary' />
-              <i className="fa-solid absolute right-2 fa-eye top-[50%] -translate-y-[30%] text-slate-500 cursor-pointer" onClick={() => setPasswordVisible(!passVisible)}></i>
+              <i className="fa-solid absolute right-2 fa-eye top-[50%] -translate-y-[30%] text-slate-500 w- cursor-pointer" onClick={() => setPasswordVisible(!passVisible)}></i>
             </div>
           </div>
           {/* agrrement  */}

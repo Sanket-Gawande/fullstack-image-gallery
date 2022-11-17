@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 @layer components{
-  .formGroup { @apply  w-full md:w-[50%] mt-4 flex flex-wrap flex-col px-2}
+  .formGroup { @apply  w-full md:w-[45%] mt-4 mx-2 flex flex-wrap flex-col px-2}
 }
 *{
   font-family: "Manrope" , sans-serif;
