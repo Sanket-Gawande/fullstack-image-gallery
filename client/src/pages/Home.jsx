@@ -63,7 +63,7 @@ const home = () => {
   // removes user from localStorage
   function logOut() {
     localStorage.removeItem("user");
-    navigate("/login")
+    resetUser()
   }
   // handles delete iamges
   const handleDeleteImages = async () => {
