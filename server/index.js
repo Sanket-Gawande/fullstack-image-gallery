@@ -18,7 +18,7 @@ app.use(
     credentials: true,
   })
 );
-console.log(process.env.CLIENT_URL)
+console.log(process.env.CLIENT_URL);
 app.use(cookieParser());
 app.use(fileUpload());
 app.use(express.json({ limit: "50mb" }));
