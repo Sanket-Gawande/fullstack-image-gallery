@@ -27,9 +27,8 @@ app.use("/api/static/images", express.static("images"));
 app.use("/api", loginRouter);
 app.use("/api/images", imageRouter);
 app.get("/get", (req, res) => {
-
   // res.writeHead(304, { Location: "https://rsquare-gallery.vercel.app" }).end();
-  res.redirect("https://rsquare-gallery.vercel.app/");
+  res.redirect(`${process.env.CLIENT_URL}/verification-status`);
 });
 mongoose
   .connect(process.env.mongo_url, {})
