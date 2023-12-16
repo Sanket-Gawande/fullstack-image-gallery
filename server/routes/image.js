@@ -15,16 +15,20 @@ imageRouter.post("/add", verifyToken, async (req, res) => {
   const allFiles = images?.name ? [images] : [...images];
   if (allFiles.length <= 0) {
     res.status(400).json({ error: true, message: "No images found" });
-    return
+    return;
   }
-  
+
   const imagesData = allFiles.map((image) => {
     const { name, size, mimetype } = image;
     // handling svg files extention as it giver mimetype = image/svg+xml
     const ext = mimetype === "image/svg+xml" ? "svg" : mimetype?.substring(6);
     const random = Math.random().toString(32).substring(2);
     const path = `images/${name}_${random}.${ext}`;
-    image.mv("./" + path, (err) => console.log(err));
+    try {
+      image.mv("./" + path, (err) => console.log(err));
+    } catch (error) {
+      console.log(error);
+    }
     return {
       name,
       id: random,
@@ -84,4 +88,3 @@ imageRouter.post("/delete", verifyToken, async (req, res) => {
   });
 });
 export default imageRouter;
-  

@@ -101,7 +101,7 @@ loginRouter.post("/login", async (req, res) => {
     res.status(400).json({
       error: true,
       message:
-        "Email is not verified.Please verify using link sent to your email within 30min or re-signup",
+        "Email is not verified.Please verify using link sent to your email within 30 minutes or re-signup",
     });
     return;
   }
@@ -109,8 +109,8 @@ loginRouter.post("/login", async (req, res) => {
     res.status(400).json({ error: true, message: "Invalid creadentials" });
     return;
   }
-  user.password = undefined;
-  user.verificationToken = undefined;
+  delete user.password;
+  delete user.verificationToken;
   const token = jwt.sign({ email, _id: user._id }, process.env.JWT_SECRET);
   res
     .status(200)
@@ -126,19 +126,19 @@ loginRouter.post("/login", async (req, res) => {
 //  email verification token
 loginRouter.get("/email/verify/:verificationToken", async (req, res) => {
   const { verificationToken } = req.params;
-  const verified = await userModel.find({ verificationToken });
-  if (!verified[0]) {
+  const verified = await userModel.findOne({ verificationToken });
+  if (!verified) {
     res.json({ error: true, message: "Invalid link" });
     return;
   }
   const validTime =
-    new Date().getTime() - new Date(verified[0].tokenCreatedOn).getTime();
+    new Date().getTime() - new Date(verified.tokenCreatedOn).getTime();
   if (validTime <= 1.8e6) {
     const newToken = bcrypt.hashSync(
       Math.random().toString(32).substring(2, 10),
       10
     );
-    const r = await userModel.updateOne(
+    await userModel.updateOne(
       { verificationToken },
       { $set: { verified: true, verificationToken: newToken } }
     );
