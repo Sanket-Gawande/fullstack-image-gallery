@@ -16,7 +16,7 @@ app.use(
     credentials: true,
   })
 );
-console.log(process.env.CLIENT_URL);
+
 app.use(cookieParser());
 app.use(fileUpload());
 app.use(express.json({ limit: "50mb" }));
@@ -26,7 +26,6 @@ app.use("/api/static/images", express.static("images"));
 app.use("/api", loginRouter);
 app.use("/api/images", imageRouter);
 app.get("/get", (req, res) => {
-  // res.writeHead(304, { Location: "https://rsquare-gallery.vercel.app" }).end();
   res.redirect(`${process.env.CLIENT_URL}/verification-status`);
 });
 mongoose
